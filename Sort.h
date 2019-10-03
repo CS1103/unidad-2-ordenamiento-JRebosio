@@ -1,22 +1,23 @@
-//
-// Created by rudri on 9/17/2019.
-//
-
 #ifndef SORT_METHODS_SORT_H
 #define SORT_METHODS_SORT_H
-#include<string>
-#include <vector>
-#include "merge.h"
-#include "shell.h"
-#include "quick.h"
-using namespace std;
+#include "Merge.h"
+#include "Quick.h"
+#include "Heap.h"
 
 template<typename SortMethod>
-class Sorter : public SortMethod {
+class Sorter : private SortMethod{
 public:
-    template<class T, template<class ...> class Container, typename ... Types>
-    void operator()(Container<T> &cnt, Types ... a) {
-        this->sort(cnt, a...);
+    template<typename container, typename ... Types>
+    void operator()(container &cnt, Types ... args){
+        this-> sort(cnt, args...);
+    }
+    template<typename container>
+    void print(container cnt){
+        auto it = cnt.begin();
+        while(it != cnt.end()){
+            cout << it->trade_usd << std::endl;
+            it ++;
+        }
     }
 };
 

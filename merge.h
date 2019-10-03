@@ -1,73 +1,153 @@
-//
-// Created by Usuario on 1/10/2019.
-//
-
-#ifndef SORTMETHODS_MERGE_H
-#define SORTMETHODS_MERGE_H
-
+#ifndef PROYECTO2_MERGE_H
+#define PROYECTO2_MERGE_H
+#include <iostream>
 #include <vector>
 
-using namespace std;
+using std::vector;
+using std::cout;
+using std::cin;
 
-//template<typename T>
-class MergeSort{
+class MergeSort {
 public:
-    template<class T, template<class ...> class Container>
-    void sort(Container<T> &cnt, int first, int last);
-    template<class T, template<class ...> class Container>
-    void merge(Container<T> &array, int start, int middle, int end);
+    template<typename container, typename forward>
+    void sort(container &cnt, forward first, forward last, int k) {
+        if (k == 1)
+            sort1(cnt, first, last);
 
-};
-
-template<class T, template<class ...> class Container>
-void MergeSort::sort (Container<T>  &cnt, int start, int end) {
-    int middle;
-    if (start < end) {
-        middle = start + (start - end) / 2;
-        sort(cnt, start, middle);
-        sort(cnt, middle + 1, end);
-        merge(cnt, start, middle, end);
+        else
+            sort5(cnt, first, last);
     }
-}
 
 
+    template<typename container, typename forward>
+    void sort1(container &cnt, forward first, forward last) {
 
-
-template<class T, template<class ...> class Container>
-void MergeSort::merge(Container<T>  &array, int start, int middle, int end){
-
-    int k = 0; int i = start; int j = middle + 1; int tam = end - start + 1;
-    //T* temp = new T[tam];
-    vector<T> temp;
-
-    while (i <= middle && j <= end) {
-        if (array[i] < array[j]) {
-            temp[k] = array[i];
-            i++; k++;
-        }else{
-            temp[k] = array[j];
-            j++; k++;
+        if (first != last) {
+            auto mid = first + (last - first) / 2;
+            sort1(cnt, first, mid);
+            sort1(cnt, mid + 1, last);
+            merge1(cnt, first, mid, last);
         }
     }
 
-    while (i <= middle) {
-        temp[k] = array[i];
-        i++; k++;
+    template<typename container, typename forward>
+    void sort5(container &cnt, forward first, forward last) {
+
+        if (first != last) {
+            auto mid = first + (last - first) / 2;
+            sort5(cnt, first, mid);
+            sort5(cnt, mid + 1, last);
+            merge5(cnt, first, mid, last);
+        }
     }
 
-    while (j <= end) {
-        temp[k] = array[j];
-        j++; k++;
+
+    template<typename container>
+    bool comp(container &cnt1, container &cnt2) {
+        if (cnt1->countryOrArea < cnt2->countryOrArea)
+            return true;
+        else if (cnt1->countryOrArea == cnt2->countryOrArea) {
+            if (cnt1->year < cnt2->year)
+                return true;
+            else if (cnt1->year == cnt2->year) {
+                if (cnt1->flow < cnt2->flow)
+                    return true;
+                else if (cnt1->flow == cnt2->flow) {
+                    if (cnt1->commodity < cnt2->commodity)
+                        return true;
+                    else if (cnt1->commodity == cnt2->commodity)
+                        if (cnt1->trade_usd <= cnt2->trade_usd)
+                            return true;
+                }
+            }
+        }
+        return false;
     }
 
-    for (int l = 0; l < tam; ++l) {
-        array[start + l] = temp[l];
+
+    template<typename container, typename forward>
+    void merge1(container &cnt, forward first, forward mid, forward last) {
+        int sizeLeft = (mid - first) + 1;
+        int sizeRight = (last - mid);
+        container left(sizeLeft);
+        container right(sizeRight);
+        auto beg = first;
+        auto startOfSecondHalf = mid + 1;
+        auto lbeg = left.begin();
+        auto rbeg = right.begin();
+        for (auto &i : left) {
+            i = *beg;
+            beg++;
+        }
+        for (auto &i : right) {
+            i = *startOfSecondHalf;
+            startOfSecondHalf++;
+        }
+        beg = first;
+        while (lbeg != left.end() && rbeg != right.end()) {
+            if (lbeg->trade_usd <= rbeg->trade_usd) {
+                *beg = *lbeg;
+                lbeg++;
+            } else {
+                *beg = *rbeg;
+                rbeg++;
+            }
+            beg++;
+        }
+        while (lbeg != left.end()) {
+            *beg = *lbeg;
+            lbeg++;
+            beg++;
+        }
+        while (rbeg != right.end()) {
+            *beg = *rbeg;
+            rbeg++;
+            beg++;
+        }
     }
 
-}
+    template<typename container, typename forward>
+    void merge5(container &cnt, forward first, forward mid, forward last) {
+        int sizeLeft = (mid - first) + 1;
+        int sizeRight = (last - mid);
+        container left(sizeLeft);
+        container right(sizeRight);
+        auto beg = first;
+        auto startOfSecondHalf = mid + 1;
+        auto lbeg = left.begin();
+        auto rbeg = right.begin();
+        for (auto &i : left) {
+            i = *beg;
+            beg++;
+        }
+        for (auto &i : right) {
+            i = *startOfSecondHalf;
+            startOfSecondHalf++;
+        }
+        beg = first;
+        while (lbeg != left.end() && rbeg != right.end()) {
+            if (comp(lbeg, rbeg)) {
+                *beg = *lbeg;
+                lbeg++;
+            } else {
+                *beg = *rbeg;
+                rbeg++;
+            }
+            beg++;
+        }
+        while (lbeg != left.end()) {
+            *beg = *lbeg;
+            lbeg++;
+            beg++;
+        }
+        while (rbeg != right.end()) {
+            *beg = *rbeg;
+            rbeg++;
+            beg++;
+        }
+    }
+
+};
 
 
-
-
-
-#endif //SORTMETHODS_MERGE_H
+#endif //PROYECTO2_MERGE_H
